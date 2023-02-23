@@ -1,5 +1,5 @@
 import { gql } from 'apollo-server-express'
-import { find, remove } from 'lodash'
+import { filter, find, remove } from 'lodash'
 
 const contactsArray = [
   {
@@ -19,7 +19,7 @@ const contactsArray = [
   }
 ]
 
-const cars = [
+const carsArray = [
   {
     id: '1',
     year: '2019',
@@ -101,58 +101,131 @@ type Contact {
   lastName: String
 }
 
+type Car {
+  id: String!
+  year: Int!
+  make: String!
+  model: String!
+  price: Float!
+  personId: String!
+}
+
 type Query {
   contact(id: String!): Contact
   contacts: [Contact]
+  car(id: String!): Car
+  cars: [Car]
+  contactCars(personId: String!): [Car]
 }
 
 type Mutation {
   addContact(id: String!, firstName: String!, lastName: String!): Contact
   updateContact(id: String!, firstName: String, lastName: String): Contact
   removeContact(id: String!): Contact
+
+  addCar(id: String!, year: Int!, make: String!, model: String!, price: Float!, personId: String!): Car
+  updateCar(id: String!, year: Int, make: String, model: String, price: Float, personId: String!): Car
+  removeCar(id: String!): Card
+  removeCars(personId: String!): [Car]
 }`
 
-  const resolvers = {
-    Query: {
-      contacts: () => contactsArray,
-      contact: (root, args) => {
-        return find(contactsArray, { id: args.id })
+const resolvers = {
+  Query: {
+    contacts: () => contactsArray,
+    contact: (root, args) => {
+      return find(contactsArray, { id: args.id })
+    },
+    cars: () => carsArray,
+    car: (root, args) => {
+      return find(carsArray, { id: args.id })
+    },
+    contactCars(parent, args, context, info) {
+      return filter(carsArray, { personId: args.personId });
+    },
+  },
+  Mutation: {
+    addContact: (root, args) => {
+      const newContact = {
+        id: args.id,
+        firstName: args.firstName,
+        lastName: args.lastName
       }
-      },
-      Mutation: {
-        addContact: (root, args) => {
-          const newContact = {
-            id: args.id,
-            firstName: args.firstName,
-            lastName: args.lastName
-          }
-    
-          contactsArray.push(newContact)
-    
-          return newContact
-        },
-        updateContact: (root, args) => {
-          const contact = find(contactsArray, { id: args.id })
-          if (!contact) throw new Error(`Couldn't find contact with id ${args.id}`)
-    
-          contact.firstName = args.firstName
-          contact.lastName = args.lastName
-    
-          return contact
-        },
-        removeContact: (root, args) => {
-          const removedContact = find(contactsArray, { id: args.id })
-    
-          if (!removedContact) throw new Error(`Couldn't find contact with id ${args.id}`)
-    
-          remove(contactsArray, c => {
-            return c.id === removedContact.id
-          })
-    
-          return removedContact
-        }
-      }
-      
-    }
 
-    export { typeDefs, resolvers }
+      contactsArray.push(newContact)
+
+      return newContact
+    },
+    updateContact: (root, args) => {
+      const contact = find(contactsArray, { id: args.id })
+      if (!contact) throw new Error(`Couldn't find contact with id ${args.id}`)
+
+      contact.firstName = args.firstName
+      contact.lastName = args.lastName
+
+      return contact
+    },
+    removeContact: (root, args) => {
+      const removedContact = find(contactsArray, { id: args.id })
+
+      if (!removedContact) throw new Error(`Couldn't find contact with id ${args.id}`)
+
+      remove(contactsArray, c => {
+        return c.id === removedContact.id
+      })
+
+      return removedContact
+    },
+    addCar: (root, args) => {
+      const newCar = {
+        id: args.id,
+        year: args.year,
+        make: args.make,
+        model: args.model,
+        price: args.price,
+        personId: args.personId
+      }
+
+      carsArray.push(newCar)
+
+      return newCar
+    },
+
+    updateCar: (root, args) => {
+      const car = find(carsArray, { id: args.id })
+      if (!car) throw new Error(`Couldn't find car with id ${args.id}`)
+
+      car.year = args.year;
+      car.make = args.make;
+      car.model = args.model;
+      car.price = args.price;
+      car.personId = args.personId;
+
+      return car
+    },
+    removeCar: (root, args) => {
+      const removedCar = find(carsArray, { id: args.id })
+
+      if (!removedCar) throw new Error(`Couldn't find car with id ${args.id}`)
+
+      remove(carsArray, c => {
+        return c.id === removedCar.id
+      })
+
+      return removedCar
+    },
+    removeCars: (root,args) => {
+      const removedCars = filter(carsArray, {personId: args.personId})
+
+      if(!removedCars) throw new Error(`Couldn't find cars with id ${args.personId}`)
+
+      remove(carsArray, c => {
+        return c.personId === removedCars.personId
+      })
+
+      return removedCars
+    }
+  }
+
+}
+
+export { typeDefs, resolvers }
