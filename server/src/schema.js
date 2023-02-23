@@ -115,7 +115,7 @@ type Query {
   contacts: [Contact]
   car(id: String!): Car
   cars: [Car]
-  contactCars(personId: String!): [Car]
+  personCars(personId: String!): [Car]
 }
 
 type Mutation {
@@ -125,7 +125,7 @@ type Mutation {
 
   addCar(id: String!, year: Int!, make: String!, model: String!, price: Float!, personId: String!): Car
   updateCar(id: String!, year: Int, make: String, model: String, price: Float, personId: String!): Car
-  removeCar(id: String!): Card
+  removeCar(id: String!): Car
   removeCars(personId: String!): [Car]
 }`
 
@@ -139,7 +139,7 @@ const resolvers = {
     car: (root, args) => {
       return find(carsArray, { id: args.id })
     },
-    contactCars(parent, args, context, info) {
+    personCars(parent, args, context, info) {
       return filter(carsArray, { personId: args.personId });
     },
   },
