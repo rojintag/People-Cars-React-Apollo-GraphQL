@@ -3,8 +3,10 @@ import { v4 as uuidv4 } from 'uuid'
 
 import { Button, Form, Input, InputNumber, Select } from 'antd'
 import { useMutation, useQuery } from '@apollo/client'
-import { ADD_CAR, GET_CARS, GET_CONTACTS, PERSON_CARS } from '../../queries'
-import { Option } from 'antd/es/mentions'
+import { ADD_CAR, GET_CARS, GET_CONTACTS, PERSON_CARS} from '../../queries'
+import Title from '../layout/Title'
+
+const { Option } = Select;
 
 const AddCar = () => {
   const [id, setId] = useState(uuidv4())
@@ -18,17 +20,19 @@ const AddCar = () => {
     forceUpdate([])
   }, [])
 
-  const onFinish = values => {
-    const { id, make, model, year, price, personId } = values
+  const onFinish = (values) => {
+    let { year, make, model, price, personId } = values;
+    year = parseInt(year);
+    price = parseInt(price);
 
     addCar({
       variables: {
         id,
+        year,
         make,
         model,
-        year,
         price,
-        personId
+        personId,
       },
       update: (cache, { data: { addCar } }) => {
         const data = cache.readQuery({ query: GET_CARS });
@@ -48,11 +52,13 @@ const AddCar = () => {
     });
 
     setId(uuidv4());
-    console.log(values);
   };
+
+  // console.log('length',data.contacts.length);
+  
   return (
-    <div style={{ position: 'relative' }}>
-      <h1 style={{ backgroundColor: 'white', position: 'absolute', top: '-20px', left: '45%', padding: '0 .5rem' }}>Add Car</h1>
+    <div>
+      <Title title={'Add Car'} />
       <Form
         name='add-car-form'
         form={form}
@@ -88,19 +94,20 @@ const AddCar = () => {
           rules={[{ required: true, message: 'Please input the price!' }]}
         >
           <InputNumber
-          min={0}
+            min={0}
             formatter={(value) => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
             parser={(value) => value.replace(/\$\s?|(,*)/g, '')}
 
           />
         </Form.Item>
         <Form.Item
-          label='Person'
-          name='person'
+          label='PersonId'
+          name='personId'
           rules={[{ required: true, message: 'Please select the person!' }]}
         >
-          <Select placeholder="Select a person">
-            {data? data.contacts.map((person) => (
+        <Select placeholder="Select a person">
+            {data
+              ? data.contacts.map((person) => (
                   <Option key={person.id} value={String(person.id)}>
                     {person.firstName} {person.lastName}
                   </Option>

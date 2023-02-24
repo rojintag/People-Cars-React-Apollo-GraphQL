@@ -1,4 +1,4 @@
-import { Card, List } from 'antd'
+import { Button, Card, List } from 'antd'
 
 import { EditOutlined } from '@ant-design/icons'
 import RemoveContact from '../buttons/RemoveContact'
@@ -7,6 +7,7 @@ import UpdateContact from '../forms/UpdateContact'
 import CarCard from './CarCard'
 import { GET_CARS, PERSON_CARS } from '../../queries'
 import { useQuery } from '@apollo/client'
+import { Link } from 'react-router-dom'
 
 const getStyles = () => ({
   card: {
@@ -59,7 +60,7 @@ const ContactCard = props => {
         />
       ) : (
         <Card
-          style={styles.card}
+        style={{width: "700px", display: "flex", flexDirection: "column", alignItems: "center", border: "1px solid #c9c9c9"}}
           actions={[
             <EditOutlined key='edit' onClick={handleButtonClick} />,
             <RemoveContact id={id} />
@@ -73,6 +74,13 @@ const ContactCard = props => {
         </List.Item>
       ))}
     </List>
+    <Link to={`/details/${id}`}>
+              <Button
+                type="link"
+              >
+                Show More
+              </Button>
+            </Link>
         </Card>
       )}
     </div>

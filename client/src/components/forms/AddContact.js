@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { Button, Form, Input } from 'antd'
 import { useMutation } from '@apollo/client'
 import { ADD_CONTACT, GET_CONTACTS } from '../../queries'
+import Title from '../layout/Title'
 
 const AddContact = () => {
   const [id] = useState(uuidv4())
@@ -39,8 +40,8 @@ const AddContact = () => {
   }
 
   return (
-    <div style={{position: 'relative'}}>
-      <h1 style ={{backgroundColor: 'white', position: 'absolute', top: '-20px', left: '45%', padding: '0 .5rem'}}>Add Person</h1>
+    <div >
+      <Title title={'Add Contact'} />
       <Form
         name='add-contact-form'
         form={form}

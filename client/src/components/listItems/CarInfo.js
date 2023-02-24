@@ -12,7 +12,7 @@ const getStyles = () => ({
   }
 })
 
-const CarCard = props => {
+const CarInfo = props => {
   const [id] = useState(props.id)
   const [year, setYear] = useState(props.year)
   const [make, setMake] = useState(props.make)
@@ -53,30 +53,32 @@ const CarCard = props => {
     <div>
       {editMode ? (
         <UpdateCar
-          id={props.id}
-          year={props.year}
-          make={props.make}
-          model={props.model}
-          price={props.price}
-          personId={props.personId}
+        id={props.id}
+        year={props.year}
+        make={props.make}
+        model={props.model}
+        price={props.price}
+        personId={props.personId}
           onButtonClick={handleButtonClick}
           updateStateVariable={updateStateVariable}
         />
       ) : (
         <Card
-          title={`${year} ${make} ${model} -> $${price}`}
-          type="inner"
           style={styles.card}
           actions={[
             <EditOutlined key='edit' onClick={handleButtonClick} />,
             <RemoveCar id={id} />
           ]}
         >
-
+          <p>ID: {id}</p>
+          <p>YEAR: {year}</p>
+          <p>MAKE: {make}</p>
+          <p>MODEL: {model}</p>
+          <p>PRICE: {price}</p>
         </Card>
       )}
     </div>
   )
 }
 
-export default CarCard
+export default CarInfo
